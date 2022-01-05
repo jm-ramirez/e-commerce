@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Text } from "react-native";
+import { View, Text, Button } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import jwtDecode from "jwt-decode";
 import AuthScreen from "./src/screens/Auth";
 import AuthContext from "./src/context/AuthContext";
-import { setTokenApi, getTokenApi } from "./src/api/token";
+import { setTokenApi, getTokenApi, removeTokenApi } from "./src/api/token";
 
 export default function App() {
   const [auth, setAuth] = useState(undefined);
@@ -29,7 +29,14 @@ export default function App() {
       token: user.jwt,
       idUser: user.user._id
     });
-  }
+  };
+
+  const logout = () => {
+    if(auth){
+      removeTokenApi();
+      setAuth(null);
+    }
+  };
 
    // El useMemo lo que hace es escuchar en este caso a 'auth' 
    // y en caso que se modifique el valor, lo actualiza, de lo contrario no hace nada.
@@ -37,7 +44,7 @@ export default function App() {
     () => ({
       auth,
       login,
-      logout: () => null,
+      logout,
     }),
     [auth]
   )
@@ -46,7 +53,14 @@ export default function App() {
   return (
     <AuthContext.Provider value={authData}>
       <PaperProvider>
-        {auth ? <Text style={{ flex: 1, justifyContent: "center", textAlign: "center" }}>Zona de Usuarios</Text> : <AuthScreen />}
+        {auth ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Zona de Usuarios</Text>
+            <Button title="Cerrar sesión" onPress={authData.logout}/>
+          </View>
+        ) : (
+          <AuthScreen />
+        )}
       </PaperProvider>
     </AuthContext.Provider>
     
