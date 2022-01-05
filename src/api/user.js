@@ -6,7 +6,7 @@ export async function registerApiformData(formData){
         const params = {
             method: "POST",
             headers: {
-                "Content-Type" : "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(formData),
         };
@@ -15,6 +15,25 @@ export async function registerApiformData(formData){
         return result;
     } catch (error) {
         console.log('piki',error);
+        return null;
+    }
+}
+
+export async function loginApi(formData){
+    try {
+        const url = `${API_URL}/auth/local`;
+        const params = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        };
+        const response = await fetch(url, params);
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.log(error)
         return null;
     }
 }

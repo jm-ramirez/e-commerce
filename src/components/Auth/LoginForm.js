@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { TextInput, Button } from "react-native-paper";
-import { formStyle } from "../../styles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Toast from "react-native-root-toast";
+import { loginApi } from "../../api/user";
+import { formStyle } from "../../styles";
 
 export default function LoginForm(props) {
     const {changeForm} = props;
+    const [loading, setLoading] = useState(false)
 
     const formik = useFormik({
         initialValues: initialValues(),
         validationSchema: Yup.object(validationSchema()),
-        onSubmit: (formData) => {
-            console.log("Formulario enviado");
-            console.log(formData);
+        onSubmit: async (formData) => {
+            setLoading(true);
+            try {
+                const response = await loginApi(formData);
+                console.log(response);
+                if(response.statusCode) throw "Error en el usuario o contraseña";
+            } catch (error) {
+                Toast.show(error, {
+                    position: Toast.positions.CENTER,
+                });
+                // setLoading(false);
+            }
+            setLoading(false);
         }
     });
 
@@ -32,11 +45,13 @@ export default function LoginForm(props) {
              onChangeText={(text) => formik.setFieldValue("password", text)}
              value={formik.values.password}
              error={formik.errors.password}
+             secureTextEntry
             />
             <Button
              mode='contained' 
              style={formStyle.btnSuccess} 
              onPress={formik.handleSubmit}
+             loading={loading}
             >
                 Entrar
             </Button>
