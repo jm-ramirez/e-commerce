@@ -4,6 +4,7 @@ import { Provider as PaperProvider } from "react-native-paper";
 import jwtDecode from "jwt-decode";
 import AuthScreen from "./src/screens/Auth";
 import AuthContext from "./src/context/AuthContext";
+import AppNavigation from "./src/navigation/AppNavigation";
 import { setTokenApi, getTokenApi, removeTokenApi } from "./src/api/token";
 
 export default function App() {
@@ -54,10 +55,7 @@ export default function App() {
     <AuthContext.Provider value={authData}>
       <PaperProvider>
         {auth ? (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Zona de Usuarios</Text>
-            <Button title="Cerrar sesión" onPress={authData.logout}/>
-          </View>
+          <AppNavigation/>
         ) : (
           <AuthScreen />
         )}
